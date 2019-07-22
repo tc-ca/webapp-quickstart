@@ -1,0 +1,5 @@
+FROM nginx:stable-alpine as production-stage
+ADD base /etc/nginx/
+ADD dev /etc/nginx/
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
