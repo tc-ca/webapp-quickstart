@@ -1,0 +1,53 @@
+version: '3.7'
+
+services:
+
+
+  httpd:
+    image: localhost:50000/cdp/httpd:dev
+    build: ./99-disabled
+
+  ldap:
+    image: localhost:50000/cdp/ldap:dev
+    build: ./99-disabled
+
+  idp:
+    image: localhost:50000/cdp/idp:dev
+    build: ./99-disabled
+
+  sp:
+    image: localhost:50000/cdp/sp:dev
+    build: ./99-disabled
+
+  nginx:
+    image: localhost:50000/cdp/nginx:dev
+    build:
+      context: ./05-nginx/
+      dockerfile: Dockerfile.dev
+    ports:
+      - "80:80"
+
+  db:
+    image: localhost:50000/cdp/mssql:dev
+    ports:
+      - "1433:1433"    
+      
+  gql:
+    image: localhost:50000/cdp/gql:dev
+    command: "npm run serve"
+    volumes:
+      - ./07-gql:/app
+
+  vue:
+    image: localhost:50000/cdp/vue:dev
+    build: ./99-disabled # launch from host machine
+    # <<: *common
+    # build:
+    #   args: 
+    #     nobuild: "true"
+    # environment: 
+    #   CHOKIDAR_USEPOLLING: "true"
+    # entrypoint: ["npm"]
+    # command: "run serve"
+    # volumes:
+    #   - ./08-vue:/app
