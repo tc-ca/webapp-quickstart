@@ -10,7 +10,7 @@ done
 
 /opt/mssql-tools/bin/sqlcmd -l 30 -S localhost,1433 -h-1 -V1 -U sa -P $SA_PASSWORD -Q "
 IF DB_ID('app') IS NOT NULL BEGIN
-	RAISERROR ('CDP Database already provisioned!',1,1)
+	RAISERROR ('Database already provisioned!',1,1)
 	rollback transaction
 END" > /dev/null
 
