@@ -1,0 +1,22 @@
+version: '3.7'
+ 
+services:
+  app-registry:
+    image: registry:latest
+    container_name: app-registry
+    volumes:
+      - ./registry:/var/lib/registry
+      - ./certs:/certs 
+    networks:
+      - net
+    environment:
+      COMPOSE_CONVERT_WINDOWS_PATHS: 1
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+    ports:
+      - "50000:5000"
+    restart: unless-stopped
+
+networks:
+  net:
+    name: app-registry
