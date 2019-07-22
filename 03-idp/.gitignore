@@ -1,1 +1,3 @@
 /shibboleth-idp/credentials/
+/shibboleth-idp/metadata/idp-metadata.xml
+/shibboleth-idp/metadata/sp-metadata.xml
