@@ -1,6 +1,10 @@
 #!/bin/bash
 export MSYS_NO_PATHCONV=1
 subj="/C=Ca/L=Ottawa/O=Transport Canada/CN=app"
+rm -r ./secrets/
+mkdir ./secrets/
+mkdir ./secrets/idp
+mkdir ./secrets/sp
 
 # Setup registry
 echo "Setting up registry"
@@ -22,4 +26,10 @@ cd ssl
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout domain.key -out domain.crt -subj "$subj"
 cd ../../..
 
+# Setup idp
+
+
+# Setup sp
+rm ./04-sp/etc-shibboleth/sp-cert.pem
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout ./secrets/sp/sp-key.pem -out ./04-sp/etc-shibboleth/sp-cert.pem -subj "$subj"
 
