@@ -1,4 +1,4 @@
-FROM dom-registry:50000/cdp/idp:prod as idp-stage
+FROM localhost:50000/cdp/idp:prod as idp-stage
 
 FROM unicon/shibboleth-sp
 
