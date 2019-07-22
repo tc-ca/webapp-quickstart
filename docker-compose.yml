@@ -1,0 +1,132 @@
+version: '3.7'
+
+services:
+
+  httpd:
+    image: localhost:50000/cdp/httpd:prod
+    build: ./01-httpd/
+    container_name: app-httpd
+    networks:
+      - app-auth
+
+  ldap:
+    image: localhost:50000/cdp/ldap:prod
+    build: ./02-ldap/
+    container_name: app-ldap
+    networks:
+      - app-auth
+
+  idp:
+    image: localhost:50000/cdp/idp:prod
+    build: ./03-idp/
+    container_name: app-idp
+    depends_on:
+      - ldap
+      - httpd
+    environment:
+      JETTY_MAX_HEAP: 64m
+      JETTY_BROWSER_SSL_KEYSTORE_PASSWORD: password
+      JETTY_BACKCHANNEL_SSL_KEYSTORE_PASSWORD: password
+    networks:
+      - app-auth
+    secrets:
+     - idp_backchannel
+     - idp_browser
+     - idp_encryption
+     - idp_signing
+     - idp_sealer  
+
+  sp:
+    image: localhost:50000/cdp/sp:prod
+    build: ./04-sp/
+    container_name: app-sp
+    depends_on: 
+      - httpd
+      - idp
+    networks:
+     - app-auth
+     - app-nginx
+    secrets:
+     - source: sp_key
+
+  nginx:
+    image: localhost:50000/cdp/nginx:prod
+    build: ./05-nginx/
+    container_name: app-nginx
+    depends_on: 
+      - gql
+      - vue
+    networks:
+      - app-nginx
+
+  db:
+    image: localhost:50000/cdp/mssql:prod
+    build: 
+      context: ./06-db/
+      args:
+          SA_PASSWORD: ${SA_PASSWORD}
+    container_name: app-mssql
+    volumes: 
+      - app-mssql:/var/opt/mssql
+    networks:
+      - app-mssql 
+      
+  gql:
+    image: localhost:50000/cdp/gql:prod
+    build: ./07-gql/
+    container_name: app-gql
+    depends_on: 
+      - db
+    environment:
+      PORT: 3000
+      MSSQL_SERVER: app-mssql
+      MSSQL_PORT: 1433
+      MSSQL_USER: sa
+      MSSQL_PASSWORD: ${SA_PASSWORD}
+      MSSQL_DB_NAME: app
+    networks:
+      - app-mssql
+      - app-nginx
+    restart: on-failure
+
+  vue:
+    image: localhost:50000/cdp/vue:prod
+    build: ./08-vue/
+    container_name: app-vue
+    networks: 
+      - app-nginx
+
+volumes:
+  app-mssql:
+    name: app-mssql
+
+networks:
+  default: 
+    name: cdp
+  app-mssql:
+    name: app-mssql
+    driver: bridge
+  app-nginx:
+    name: app-nginx
+    driver: bridge
+  app-auth:
+    name: app-auth
+    driver: bridge
+
+secrets:
+  test:
+    file: ./.env
+  idp_backchannel:
+    file: ./secrets/idp/idp-backchannel.p12
+  idp_browser:
+    file: ./secrets/idp/idp-browser.p12
+  idp_encryption:
+    file: ./secrets/idp/idp-encryption.key
+  idp_signing:
+    file: ./secrets/idp/idp-signing.key
+  idp_sealer:
+    file: ./secrets/idp/sealer.jks
+  ssp_key:
+    file: ./secrets/simplesamlphp/server.pem
+  sp_key:
+    file: ./secrets/sp/sp-key.pem

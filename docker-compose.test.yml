@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  mount-test:
+    image: alpine:latest
+    container_name: mount-test
+    volumes: 
+      - C:/Users/PHILDOM/source/repos/app:/app
+    entrypoint: ["ls","-la","/app"]
+
+  secret-test:
+    image: alpine:latest
+    container_name: secret-test
+    secrets:
+      - test
+    entrypoint: ["cat","/run/secrets/test"]
