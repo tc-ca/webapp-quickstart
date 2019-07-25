@@ -2,7 +2,12 @@
 
 This is intended to be a full implementation of a webapp secured to satisfy ProtectedB.
 
-## Deployment
+## Build
+
+Add `127.0.0.1	  webapp` to your hosts file
+
+Run `setup.sh` to generate the secrets.
+_Note: run `winpty bash` if using git bash before executing the script_
 
 To build all the images and start the stack, run the following from powershell
 `docker-compose up --build`
