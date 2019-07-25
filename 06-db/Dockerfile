@@ -6,6 +6,7 @@ ENV ACCEPT_EULA=Y
 
 COPY . /app
 
+RUN chmod +x /app/provision.sh
 RUN /bin/sh -c "/opt/mssql/bin/sqlservr & /app/provision.sh"
 
 EXPOSE 1433
