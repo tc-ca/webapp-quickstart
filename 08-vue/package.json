@@ -1,0 +1,56 @@
+{
+  "name": "vuejs-app1",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "description": "VuejsApp1",
+  "author": {
+    "name": ""
+  },
+  "types": "types/",
+  "dependencies": {
+    "@panter/vue-i18next": "^0.15.0",
+    "apexcharts": "^3.8.3",
+    "axios": "^0.19.0",
+    "core-js": "^2.6.5",
+    "d3-force": "^2.0.1",
+    "fast-sort": "^1.5.6",
+    "force-graph": "^1.15.0",
+    "i18next": "13.0.0",
+    "vue": "^2.6.10",
+    "vue-apexcharts": "^1.4.0",
+    "vue-class-component": "6.0.0",
+    "vue-draggable-resizable": "^2.0.0-rc1",
+    "vue-property-decorator": "7.0.0",
+    "vue-router": "^3.0.6",
+    "vuetify": "^1.5.14",
+    "vuex": "^3.1.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@types/d3-force": "^1.2.1",
+    "@types/force-graph": "^1.14.1",
+    "@vue/cli-plugin-babel": "^3.7.0",
+    "@vue/cli-plugin-typescript": "3.0.4",
+    "@vue/cli-service": "^3.7.0",
+    "Babel": "0.0.1",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^7.1.0",
+    "typescript": "3.1.1",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
