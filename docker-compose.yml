@@ -42,7 +42,7 @@ services:
     container_name: app-sp
     depends_on: 
       - httpd
-      # - idp
+      - idp
     networks:
      - app-auth
      - app-nginx
@@ -53,9 +53,9 @@ services:
     image: localhost:50000/app/nginx:prod
     build: ./05-nginx/
     container_name: app-nginx
-    # depends_on: 
-    #   - gql
-    #   - vue
+    depends_on: 
+      - gql
+      - vue
     networks:
       - app-nginx
 
