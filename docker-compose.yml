@@ -3,21 +3,21 @@ version: '3.7'
 services:
 
   httpd:
-    image: localhost:50000/cdp/httpd:prod
+    image: localhost:50000/app/httpd:prod
     build: ./01-httpd/
     container_name: app-httpd
     networks:
       - app-auth
 
   ldap:
-    image: localhost:50000/cdp/ldap:prod
+    image: localhost:50000/app/ldap:prod
     build: ./02-ldap/
     container_name: app-ldap
     networks:
       - app-auth
 
   idp:
-    image: localhost:50000/cdp/idp:prod
+    image: localhost:50000/app/idp:prod
     build: ./03-idp/
     container_name: app-idp
     depends_on:
@@ -25,8 +25,8 @@ services:
       - httpd
     environment:
       JETTY_MAX_HEAP: 64m
-      JETTY_BROWSER_SSL_KEYSTORE_PASSWORD: password
-      JETTY_BACKCHANNEL_SSL_KEYSTORE_PASSWORD: password
+      JETTY_BROWSER_SSL_KEYSTORE_PASSWORD: brow
+      JETTY_BACKCHANNEL_SSL_KEYSTORE_PASSWORD: back
     networks:
       - app-auth
     secrets:
@@ -37,12 +37,12 @@ services:
      - idp_sealer  
 
   sp:
-    image: localhost:50000/cdp/sp:prod
+    image: localhost:50000/app/sp:prod
     build: ./04-sp/
     container_name: app-sp
     depends_on: 
       - httpd
-      - idp
+      # - idp
     networks:
      - app-auth
      - app-nginx
@@ -50,17 +50,17 @@ services:
      - source: sp_key
 
   nginx:
-    image: localhost:50000/cdp/nginx:prod
+    image: localhost:50000/app/nginx:prod
     build: ./05-nginx/
     container_name: app-nginx
-    depends_on: 
-      - gql
-      - vue
+    # depends_on: 
+    #   - gql
+    #   - vue
     networks:
       - app-nginx
 
   db:
-    image: localhost:50000/cdp/mssql:prod
+    image: localhost:50000/app/mssql:prod
     build: 
       context: ./06-db/
       args:
@@ -72,7 +72,7 @@ services:
       - app-mssql 
       
   gql:
-    image: localhost:50000/cdp/gql:prod
+    image: localhost:50000/app/gql:prod
     build: ./07-gql/
     container_name: app-gql
     depends_on: 
@@ -90,7 +90,7 @@ services:
     restart: on-failure
 
   vue:
-    image: localhost:50000/cdp/vue:prod
+    image: localhost:50000/app/vue:prod
     build: ./08-vue/
     container_name: app-vue
     networks: 
@@ -102,7 +102,7 @@ volumes:
 
 networks:
   default: 
-    name: cdp
+    name: app
   app-mssql:
     name: app-mssql
     driver: bridge

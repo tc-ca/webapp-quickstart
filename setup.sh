@@ -1,54 +1,139 @@
 #!/bin/bash
+echo "This will delete existing credentials and metadata!"
+echo "Windows users: make sure this is running in winpty"
+read -p "Press enter to continue"
+
+# Breaks on windows unless this is set
 export MSYS_NO_PATHCONV=1
-subj="/C=Ca/L=Ottawa/O=Transport Canada/CN=app"
-rm -r ./secrets/
+# Autofill value for openssh subjects
+subj="/CN=webapp"
+
+rm -r ./out/ || true
+rm -r ./secrets/ || true
 mkdir ./secrets/
 mkdir ./secrets/idp
 mkdir ./secrets/sp
+mkdir ./out/
 
+
+
+
+#
 # Setup registry
-echo "Setting up registry"
+#
+printf "\n\nSetting up registry\n"
 cd ./00-registry/
-rm -r certs
+rm -r certs || true
 mkdir certs
 cd certs
-openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout domain.key -out domain.crt -subj "$subj"
+# TLS cert
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout domain.key -out domain.crt -subj "$subj" 2>/dev/null
 cd ..
 cp .env.example .env
 cd ..
 
+
+
+
+#
 # Setup httpd 
-echo "Setting up httpd"
+#
+printf "\n\nSetting up httpd\n"
 cd 01-httpd/etc-httpd/
-rm -r ./ssl/
+rm -r ./ssl/ || true
 mkdir ssl
 cd ssl
-openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout domain.key -out domain.crt -subj "$subj"
+# TLS cert
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout domain.key -out domain.crt -subj "$subj" 2>/dev/null
 cd ../../..
 
+
+
+
+#
 # Setup idp
-rm -r ./03-idp/shibboleth-idp/credentials/
+#
+printf "\n\nSetting up IdP\n"
+rm -r ./03-idp/shibboleth-idp/credentials/ || true
 mkdir ./03-idp/shibboleth-idp/credentials/
-openssl req -x509 -sha256 -nodes -days 256 -newkey rsa:2048 -keyout ./secrets/idp/idp-backchannel.p12 -out ./03-idp/shibboleth-idp/credentials/idp-backchannel.crt -subj "$subj"
-openssl req -x509 -sha256 -nodes -days 256 -newkey rsa:2048 -keyout ./secrets/idp/idp-encryption.p12 -out ./03-idp/shibboleth-idp/credentials/idp-encryption.crt -subj "$subj"
-openssl req -x509 -sha256 -nodes -days 256 -newkey rsa:2048 -keyout ./secrets/idp/idp-signing.p12 -out ./03-idp/shibboleth-idp/credentials/idp-signing.crt -subj "$subj"
-openssl req -x509 -sha256 -nodes -days 256 -newkey rsa:2048 -keyout ./secrets/idp/idp-browser.p12 -subj "$subj"
-openssl req -x509 -sha256 -nodes -days 256 -newkey rsa:2048 -keyout ./secrets/idp/sealer.jks -out ./03-idp/shibboleth-idp/credentials/sealer.kver -subj "$subj"
-cd ./03-idp/shibboleth-idp/
-rm ./metadata/idp-metadata.xml
-rm ./metadata/sp-metadata.xml
-rm ./metadata/ssp-metadata.xml
-cp ./metadata/idp-metadata.xml.example ./metadata/idp-metadata.xml
-cp ./metadata/sp-metadata.xml.example ./metadata/sp-metadata.xml
-cp ./metadata/ssp-metadata.xml.example ./metadata/ssp-metadata.xml
-# awk 'BEGIN{getline l < "./credentials/idp-backchannel.crt"}/@BACKCHANNEL@/{gsub("@BACKCHANNEL@",l)}1' ./metadata/idp-metadata.xml
-sed -i -e '/@BACKCHANNEL@/{r ./credentials/idp-backchannel.crt' -e 'd}' ./metadata/idp-metadata.xml
-sed -i -e '/@IDPSIGNING@/{r ./credentials/idp-signing.crt' -e 'd}' ./metadata/idp-metadata.xml
-sed -i -e '/@IDPENCRYPTION@/{r ./credentials/idp-encryption.crt' -e 'd}' ./metadata/idp-metadata.xml
+
+# Run unicon setup script
+echo "Running unicon setup."
+echo "Expected domain: webapp"
+docker run -it -v $(pwd)/out:/ext-mount --rm unicon/shibboleth-idp init-idp.sh 2>/dev/null
+	# Copy results to proper locations
+mv ./out/customized-shibboleth-idp/credentials/{idp-backchannel.crt,idp-encryption.crt,idp-signing.crt,sealer.kver} ./03-idp/shibboleth-idp/credentials/
+mv ./out/customized-shibboleth-idp/credentials/* ./secrets/idp/
+mv ./out/customized-shibboleth-idp/metadata/* ./03-idp/shibboleth-idp/metadata/
+	# Remove validUntil from idp metadata
+sed -ie 's/validUntil="[^"]*" //' 03-idp/shibboleth-idp/metadata/idp-metadata.xml
+read -s -p "Re-enter backchannel password for compose:" backchannel
+printf "\n"
+
+# Create idp browser keystore
+cd ./secrets/idp/
+openssl req -x509 -sha256 -nodes -days 256 -newkey rsa:2048 -keyout idp-browser.pem -out idp-browser.crt -subj "$subj" 2>/dev/null
+read -s -p "Enter browser keystore password: " browser
+printf "\n"
+openssl pkcs12 -inkey idp-browser.pem -in idp-browser.crt -export -out idp-browser.p12 -passout pass:${browser} 
 cd ../..
 
-# Setup sp
-rm ./04-sp/etc-shibboleth/sp-cert.pem
-openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout ./secrets/sp/sp-key.pem -out ./04-sp/etc-shibboleth/sp-cert.pem -subj "$subj"
-sed -i -e '/@SPCERT@/{r ./04-sp/etc-shibboleth/sp-cert.pem' -e 'd}' ./03-idp/shibboleth-idp/metadata/sp-metadata.xml
+# Add store passwords to compose
+sed -i "s/JETTY_BROWSER_SSL_KEYSTORE_PASSWORD: .*/JETTY_BROWSER_SSL_KEYSTORE_PASSWORD: ${browser}/" docker-compose.yml
+sed -i "s/JETTY_BACKCHANNEL_SSL_KEYSTORE_PASSWORD: .*/JETTY_BACKCHANNEL_SSL_KEYSTORE_PASSWORD: ${backchannel}/" docker-compose.yml
 
+
+# Transfer idp.properties
+sed -i "s/idp.scope=.*/idp.scope= $( \
+	 grep -Eow "idp.scope=(.*)" \
+		./out/customized-shibboleth-idp/conf/idp.properties \
+		| sed 's/idp.scope=//' \
+	)/" ./03-idp/shibboleth-idp/conf/idp.properties 
+sed -i "s/idp.sealer.storePassword=.*/idp.sealer.storePassword= $( \
+	 grep -Eow "idp.sealer.storePassword=(.*)" \
+		./out/customized-shibboleth-idp/conf/idp.properties \
+		| sed 's/idp.sealer.storePassword=//' \
+	)/" ./03-idp/shibboleth-idp/conf/idp.properties 
+sed -i "s/idp.sealer.keyPassword=.*/idp.sealer.keyPassword= $( \
+	 grep -Eow "idp.sealer.keyPassword=(.*)" \
+		./out/customized-shibboleth-idp/conf/idp.properties \
+		| sed 's/idp.sealer.keyPassword=//' \
+	)/" ./03-idp/shibboleth-idp/conf/idp.properties 
+
+
+
+
+#
+# Setup sp
+#
+printf "\n\nSetting up SP\n"
+rm ./04-sp/etc-shibboleth/sp-cert.pem
+
+# SP key
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout ./secrets/sp/sp-key.pem -out ./04-sp/etc-shibboleth/sp-cert.pem -subj "$subj" 2>/dev/null
+
+# Fetch new metadata
+echo "Retrieving SP metadata, expecting availability on localhost"
+	( rm ./03-idp/shibboleth-idp/metadata/sp-metadata.xml 2>/dev/null || true ) \
+&& 	docker-compose up -d --build sp  >/dev/null \
+&& 	bash -c 'while [[ "$(curl --insecure -s -o /dev/null -w ''%{http_code}'' https://localhost/Shibboleth.sso/Metadata)" != "200" ]]; do sleep 5; done' \
+&&	curl -o ./03-idp/shibboleth-idp/metadata/sp-metadata.xml https://localhost/Shibboleth.sso/Metadata --insecure \
+&&  docker-compose stop sp
+
+
+
+
+#
+# Cleanup
+#
+echo "Cleanup"
+# rm -r ./out/
+
+
+
+
+#
+# Finish
+#
+echo "Secrets have been regenerated!"
+echo "Remember to rebuild next compose"
