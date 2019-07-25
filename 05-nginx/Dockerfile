@@ -1,4 +1,4 @@
-FROM localhost:50000/cdp/vue:prod as vue-stage
+FROM localhost:50000/app/vue:prod as vue-stage
 
 FROM nginx:stable-alpine as production-stage
 ADD base /etc/nginx/
