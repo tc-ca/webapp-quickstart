@@ -1,33 +1,5 @@
-import { GraphQLResolveInfo } from 'graphql';
-import { IncomingMessage } from 'http';
-
-import { Column, Dictionary, Table } from '../';
-import { database } from '../db';
-import tables from './../tables';
-
 const resolver = {
-    async table(args : any, msg : IncomingMessage, info : GraphQLResolveInfo) {
-        function sanitize(s: string): string {
-            return s.replace(/\W+/g, '_').toLowerCase();
-        }
-        const tables: Dictionary< Table > = (await database.query(database.tableQuery)).reduce((map : any, col : Column & {
-            tableName: string
-        }) => {
-            const tableName = sanitize(col.tableName);
-            col.gqlName = sanitize(col.dbName);
-            if (tableName in map) {
-                map[tableName].columns.push(col);
-            } else {
-                map[tableName] = {
-                    name: col.tableName,
-                    columns: [col]
-                };
-            }
-            return map;
-        }, {});
-        return tables[args.name];
-    },
-
+    
     ...require('./resolvers/queries').default,
 	...require('./resolvers/mutations').default,
 
