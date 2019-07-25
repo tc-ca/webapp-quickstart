@@ -1,0 +1,14 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2018",
+        "lib": [ "es6" ],
+        "sourceMap": true,
+	    "outDir": "dist/",
+		"skipLibCheck": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
