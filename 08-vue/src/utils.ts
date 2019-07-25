@@ -12,7 +12,10 @@ export function profile(thisArg: any, name: string, func: Function):Function {
 import Vue from 'vue';
 import { ThisTypedComponentOptionsWithArrayProps } from 'vue/types/options';
 import { ExtendedVue } from 'vue/types/vue';
-
+const blacklist = {
+	computed: {},
+	methods: {},
+}
 export function wrap<Data, Methods, Computed, PropNames extends string = never>
     (options: ThisTypedComponentOptionsWithArrayProps<Vue, Data, Methods, Computed, PropNames>):
     ExtendedVue<Vue, Data, Methods, Computed, Record<PropNames, any>> {
