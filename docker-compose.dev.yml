@@ -4,23 +4,23 @@ services:
 
 
   httpd:
-    image: localhost:50000/cdp/httpd:dev
+    image: localhost:50000/app/httpd:dev
     build: ./99-disabled
 
   ldap:
-    image: localhost:50000/cdp/ldap:dev
+    image: localhost:50000/app/ldap:dev
     build: ./99-disabled
 
   idp:
-    image: localhost:50000/cdp/idp:dev
+    image: localhost:50000/app/idp:dev
     build: ./99-disabled
 
   sp:
-    image: localhost:50000/cdp/sp:dev
+    image: localhost:50000/app/sp:dev
     build: ./99-disabled
 
   nginx:
-    image: localhost:50000/cdp/nginx:dev
+    image: localhost:50000/app/nginx:dev
     build:
       context: ./05-nginx/
       dockerfile: Dockerfile.dev
@@ -28,18 +28,18 @@ services:
       - "80:80"
 
   db:
-    image: localhost:50000/cdp/mssql:dev
+    image: localhost:50000/app/mssql:dev
     ports:
       - "1433:1433"    
       
   gql:
-    image: localhost:50000/cdp/gql:dev
+    image: localhost:50000/app/gql:dev
     command: "npm run serve"
     volumes:
       - ./07-gql:/app
 
   vue:
-    image: localhost:50000/cdp/vue:dev
+    image: localhost:50000/app/vue:dev
     build: ./99-disabled # launch from host machine
     # <<: *common
     # build:
