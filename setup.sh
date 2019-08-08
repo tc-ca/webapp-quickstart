@@ -27,7 +27,7 @@ rm -r certs || true
 mkdir certs
 cd certs
 # TLS cert
-openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout domain.key -out domain.crt -subj "$subj" 2>/dev/null
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout domain.key -out domain.crt -subj "$subj" 
 cd ..
 cp .env.example .env
 cd ..
@@ -44,7 +44,7 @@ rm -r ./ssl/ || true
 mkdir ssl
 cd ssl
 # TLS cert
-openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout domain.key -out domain.crt -subj "$subj" 2>/dev/null
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout domain.key -out domain.crt -subj "$subj" 
 cd ../../..
 
 
@@ -60,7 +60,7 @@ mkdir ./03-idp/shibboleth-idp/credentials/
 # Run unicon setup script
 echo "Running unicon setup."
 echo "Expected domain: webapp"
-docker run -it -v $(pwd)/out:/ext-mount --rm unicon/shibboleth-idp init-idp.sh 2>/dev/null
+docker run -it -v $(pwd)/out:/ext-mount --rm unicon/shibboleth-idp init-idp.sh
 	# Copy results to proper locations
 mv ./out/customized-shibboleth-idp/credentials/{idp-backchannel.crt,idp-encryption.crt,idp-signing.crt,sealer.kver} ./03-idp/shibboleth-idp/credentials/
 mv ./out/customized-shibboleth-idp/credentials/* ./secrets/idp/
@@ -72,7 +72,7 @@ printf "\n"
 
 # Create idp browser keystore
 cd ./secrets/idp/
-openssl req -x509 -sha256 -nodes -days 256 -newkey rsa:2048 -keyout idp-browser.pem -out idp-browser.crt -subj "$subj" 2>/dev/null
+openssl req -x509 -sha256 -nodes -days 256 -newkey rsa:2048 -keyout idp-browser.pem -out idp-browser.crt -subj "$subj" 
 read -s -p "Enter browser keystore password: " browser
 printf "\n"
 openssl pkcs12 -inkey idp-browser.pem -in idp-browser.crt -export -out idp-browser.p12 -passout pass:${browser} 
@@ -110,11 +110,11 @@ printf "\n\nSetting up SP\n"
 rm ./04-sp/etc-shibboleth/sp-cert.pem
 
 # SP key
-openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout ./secrets/sp/sp-key.pem -out ./04-sp/etc-shibboleth/sp-cert.pem -subj "$subj" 2>/dev/null
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout ./secrets/sp/sp-key.pem -out ./04-sp/etc-shibboleth/sp-cert.pem -subj "$subj" 
 
 # Fetch new metadata
 echo "Retrieving SP metadata, expecting availability on localhost"
-	( rm ./03-idp/shibboleth-idp/metadata/sp-metadata.xml 2>/dev/null || true ) \
+	( rm ./03-idp/shibboleth-idp/metadata/sp-metadata.xml  || true ) \
 && 	docker-compose up -d --build sp  >/dev/null \
 && 	bash -c 'while [[ "$(curl --insecure -s -o /dev/null -w ''%{http_code}'' https://localhost/Shibboleth.sso/Metadata)" != "200" ]]; do sleep 5; done' \
 &&	curl -o ./03-idp/shibboleth-idp/metadata/sp-metadata.xml https://localhost/Shibboleth.sso/Metadata --insecure \
