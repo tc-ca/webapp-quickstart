@@ -6,17 +6,16 @@ This is intended to be a full implementation of a webapp secured to satisfy Prot
 
 Add `127.0.0.1	  webapp` to your hosts file
 
-Run `setup.sh` to generate the secrets.
+Run `setup.sh` to generate the secrets.\
 _Note: run `winpty bash` if using git bash before executing the script_
 
-To build all the images and start the stack, run the following from powershell
-`docker-compose up --build`
+To build all the images and start the stack: `docker-compose up --build`
 
 ## Other
 
 ### VSCode and the private Docker registry
 
-VSCode might not like you connecting to the custom registry since the cert is self-signed.
+VSCode might not like you connecting to the custom registry since the cert is self-signed.\
 Adding this to your preferences json should fix it, be warned that it tells vscode to trust all self-signed certs.
 
 ```json
