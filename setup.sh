@@ -62,6 +62,8 @@ echo "Running unicon setup."
 echo "Expected domain: webapp"
 docker run -it -v $(pwd)/out:/ext-mount --rm unicon/shibboleth-idp init-idp.sh
 	# Copy results to proper locations
+mkdir ./03-idp/shibboleth-idp/credentials/
+mkdir ./03-idp/shibboleth-idp/metadata/
 mv ./out/customized-shibboleth-idp/credentials/{idp-backchannel.crt,idp-encryption.crt,idp-signing.crt,sealer.kver} ./03-idp/shibboleth-idp/credentials/
 mv ./out/customized-shibboleth-idp/credentials/* ./secrets/idp/
 mv ./out/customized-shibboleth-idp/metadata/* ./03-idp/shibboleth-idp/metadata/
