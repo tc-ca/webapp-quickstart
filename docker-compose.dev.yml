@@ -49,4 +49,5 @@ services:
     entrypoint: ["npm"]
     command: "run serve"
     volumes:
-      - ./08-vue:/app
+      - ./08-vue:/app:delegated
+      - /app/node_modules/
