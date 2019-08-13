@@ -88,7 +88,7 @@ openssl req -x509 -sha256 -nodes -days 256 -newkey rsa:2048 -keyout idp-browser.
 read -s -p "Enter browser keystore password: " browser
 printf "\n"
 openssl pkcs12 -inkey idp-browser.pem -in idp-browser.crt -export -out idp-browser.p12 -passout pass:${browser} 
-chown $USER :docker ./*
+chown $USER:docker ./*
 chmod o+r ugo+rw ./*
 cd ../..
 
@@ -125,7 +125,7 @@ rm ./04-sp/etc-shibboleth/sp-cert.pem
 
 # SP key
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout ./secrets/sp/sp-key.pem -out ./04-sp/etc-shibboleth/sp-cert.pem -subj "$subj" 
-chown $USER :docker ./secrets/sp/sp-key.pem
+chown $USER:docker ./secrets/sp/sp-key.pem
 chmod o+r g+rw ./secrets/sp/sp-key.pem
 
 # Fetch new metadata
