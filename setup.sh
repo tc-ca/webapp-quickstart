@@ -1,6 +1,7 @@
 #!/bin/bash
 echo "This will delete existing credentials and metadata!"
 echo "Windows users: make sure this is running in winpty"
+echo "Linux users: this might need to be run as root since the folders the docker process creates aren't managed by the normal user"
 read -p "Press enter to continue"
 
 # Breaks on windows unless this is set
@@ -8,8 +9,8 @@ export MSYS_NO_PATHCONV=1
 # Autofill value for openssh subjects
 subj="/CN=webapp"
 
-rm -r ./out/ || true
-rm -r ./secrets/ || true
+rm -rf ./out/ || true
+rm -rf ./secrets/ || true
 mkdir ./secrets/
 mkdir ./secrets/idp
 mkdir ./secrets/sp
@@ -117,7 +118,7 @@ openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout ./secrets/sp
 # Fetch new metadata
 echo "Retrieving SP metadata, expecting availability on localhost"
 	( rm ./03-idp/shibboleth-idp/metadata/sp-metadata.xml  || true ) \
-&& 	docker-compose up -d --build sp  >/dev/null \
+&& 	docker-compose up -d --build sp \
 && 	bash -c 'while [[ "$(curl --insecure -s -o /dev/null -w ''%{http_code}'' https://localhost/Shibboleth.sso/Metadata)" != "200" ]]; do sleep 5; done' \
 &&	curl -o ./03-idp/shibboleth-idp/metadata/sp-metadata.xml https://localhost/Shibboleth.sso/Metadata --insecure \
 &&  docker-compose stop sp
