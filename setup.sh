@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "This will delete existing credentials and metadata!"
+echo "This will delete existing .env, credentials and metadata!"
 echo "Windows users: make sure this is running in winpty"
 echo "Linux users: this might need to be run as root since the folders the docker process creates aren't managed by the normal user"
 read -p "Press enter to continue"
@@ -76,9 +76,6 @@ mkdir ./03-idp/shibboleth-idp/credentials/
 mkdir ./03-idp/shibboleth-idp/metadata/
 mv ./out/customized-shibboleth-idp/credentials/{idp-backchannel.crt,idp-encryption.crt,idp-signing.crt,sealer.kver} ./03-idp/shibboleth-idp/credentials/
 mv ./out/customized-shibboleth-idp/credentials/* ./secrets/idp/
-chown :docker ./secrets/idp/*
-chmod o+r ./secrets/idp/*
-
 mv ./out/customized-shibboleth-idp/metadata/idp-metadata.xml ./03-idp/shibboleth-idp/metadata/idp-metadata.xml
 	# Remove validUntil from idp metadata
 sed -ie 's/validUntil="[^"]*" //' 03-idp/shibboleth-idp/metadata/idp-metadata.xml
@@ -91,6 +88,8 @@ openssl req -x509 -sha256 -nodes -days 256 -newkey rsa:2048 -keyout idp-browser.
 read -s -p "Enter browser keystore password: " browser
 printf "\n"
 openssl pkcs12 -inkey idp-browser.pem -in idp-browser.crt -export -out idp-browser.p12 -passout pass:${browser} 
+chown :docker ./*
+chmod o+r ./*
 cd ../..
 
 # Add store passwords to compose
