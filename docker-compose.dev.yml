@@ -40,14 +40,13 @@ services:
 
   vue:
     image: localhost:50000/app/vue:dev
-    build: ./99-disabled # launch from host machine
-    # <<: *common
-    # build:
-    #   args: 
-    #     nobuild: "true"
-    # environment: 
-    #   CHOKIDAR_USEPOLLING: "true"
-    # entrypoint: ["npm"]
-    # command: "run serve"
-    # volumes:
-    #   - ./08-vue:/app
+    # build: ./99-disabled # launch from host machine
+    build:
+      args: 
+        nobuild: "true"
+    environment: 
+      CHOKIDAR_USEPOLLING: "true"
+    entrypoint: ["npm"]
+    command: "run serve"
+    volumes:
+      - ./08-vue:/app
