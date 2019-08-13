@@ -16,8 +16,8 @@
     <!-- Release some attributes to an SP. -->
     <AttributeFilterPolicy id="example1">
         <PolicyRequirementRule xsi:type="OR">
-            <Rule xsi:type="Requester" value="http://webapp/sp/shibboleth" />
-            <Rule xsi:type="Requester" value="http://anotherwebapp/sp/shibboleth" />
+            <Rule xsi:type="Requester" value="https://webapp/sp/shibboleth" />
+            <Rule xsi:type="Requester" value="https://anotherwebapp/sp/shibboleth" />
         </PolicyRequirementRule>
 
         <AttributeRule attributeID="uid">
