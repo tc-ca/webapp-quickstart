@@ -11,7 +11,7 @@ export default {
         return 1;
 	},
 	async updateTodo(args : any, msg : IncomingMessage, info : GraphQLResolveInfo) {
-        await database.executeProcedure('SP_TODO_CREATE', {
+        await database.executeProcedure('SP_TODO_UPDATE', {
 			id: args.id,
 			name: args.name,
 			priority: args.priority
@@ -19,7 +19,7 @@ export default {
         return 1;
 	},
 	async deleteTodo(args : any, msg : IncomingMessage, info : GraphQLResolveInfo) {
-        await database.executeProcedure('SP_TODO_CREATE', {
+        await database.executeProcedure('SP_TODO_DELETE', {
 			id: args.id
         });
         return 1;
