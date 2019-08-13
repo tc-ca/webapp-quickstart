@@ -48,9 +48,6 @@ services:
      - app-nginx
     secrets:
      - source: sp_key
-       uid: '999'
-       gid: '998'
-       mode: 0440
 
   nginx:
     image: localhost:50000/app/nginx:prod
