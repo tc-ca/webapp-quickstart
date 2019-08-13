@@ -17,7 +17,16 @@ mkdir ./secrets/sp
 mkdir ./out/
 
 
-
+#
+# Setup .env
+#
+echo "MSSQL SA passwords must be at least 8 characters long and contain three of the following:"
+echo "- Uppercase letters"
+echo "- Lowercase letters"
+echo "- Base 10 digits"
+echo "- Symbols"
+read -s -p "Enter the database SA password:" SAP
+echo "SA_PASSWORD=$SAP" > .env
 
 #
 # Setup registry
