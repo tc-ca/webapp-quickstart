@@ -67,7 +67,7 @@ mkdir ./03-idp/shibboleth-idp/credentials/
 mkdir ./03-idp/shibboleth-idp/metadata/
 mv ./out/customized-shibboleth-idp/credentials/{idp-backchannel.crt,idp-encryption.crt,idp-signing.crt,sealer.kver} ./03-idp/shibboleth-idp/credentials/
 mv ./out/customized-shibboleth-idp/credentials/* ./secrets/idp/
-mv ./out/customized-shibboleth-idp/metadata/* ./03-idp/shibboleth-idp/metadata/
+mv ./out/customized-shibboleth-idp/metadata/idp-metadata.xml ./03-idp/shibboleth-idp/metadata/idp-metadata.xml
 	# Remove validUntil from idp metadata
 sed -ie 's/validUntil="[^"]*" //' 03-idp/shibboleth-idp/metadata/idp-metadata.xml
 read -s -p "Re-enter backchannel password for compose:" backchannel
@@ -114,6 +114,8 @@ rm ./04-sp/etc-shibboleth/sp-cert.pem
 
 # SP key
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout ./secrets/sp/sp-key.pem -out ./04-sp/etc-shibboleth/sp-cert.pem -subj "$subj" 
+chown :docker ./secrets/sp/sp-key.pem
+chmod o+r ./secrets/sp/sp-key.pem
 
 # Fetch new metadata
 echo "Retrieving SP metadata, expecting availability on localhost"
