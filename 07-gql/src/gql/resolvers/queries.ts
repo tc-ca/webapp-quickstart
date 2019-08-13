@@ -12,12 +12,12 @@ export default {
             SELECT DISTINCT
 				${
 					[
-						{gqlName: 'id', dbName: 'TODO_CD'},
+						{gqlName: 'id', dbName: 'TODO_ID'},
 						{gqlName: 'name', dbName: 'NAME_NM'},
 						{gqlName: 'priority', dbName: 'PRIORITY_AMT'},
 					]
 						.filter((x:any) => x.gqlName in fields)
-						.map((x: any) => `[x.dbName] AS [${x.gqlName}]`)
+						.map((x: any) => `[${x.dbName}] AS [${x.gqlName}]`)
 						.join(',\n')
 				}
             FROM
