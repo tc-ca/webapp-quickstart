@@ -17,6 +17,7 @@
     <AttributeFilterPolicy id="example1">
         <PolicyRequirementRule xsi:type="OR">
             <Rule xsi:type="Requester" value="http://webapp/sp/shibboleth" />
+            <Rule xsi:type="Requester" value="http://anotherwebapp/sp/shibboleth" />
         </PolicyRequirementRule>
 
         <AttributeRule attributeID="uid">
@@ -27,7 +28,7 @@
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
 
-        <!-- <AttributeRule attributeID="surname">
+        <AttributeRule attributeID="surname">
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
 
@@ -37,7 +38,7 @@
 
         <AttributeRule attributeID="eduPersonPrincipalName">
             <PermitValueRule xsi:type="ANY" />
-        </AttributeRule> -->
+        </AttributeRule>
 
     </AttributeFilterPolicy>
 

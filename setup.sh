@@ -38,6 +38,8 @@ mkdir certs
 cd certs
 # TLS cert
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout domain.key -out domain.crt -subj "$subj" 
+chown $USER:docker ./*
+chmod o+r ./*
 cd ..
 cp .env.example .env
 cd ..
@@ -55,6 +57,8 @@ mkdir ssl
 cd ssl
 # TLS cert
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout domain.key -out domain.crt -subj "$subj" 
+chown $USER:docker ./*
+chmod ugo+r ./*
 cd ../../..
 
 
@@ -70,7 +74,7 @@ mkdir ./03-idp/shibboleth-idp/credentials/
 # Run unicon setup script
 echo "Running unicon setup."
 echo "Expected domain: webapp"
-docker run -it -v $(pwd)/out:/ext-mount --rm unicon/shibboleth-idp init-idp.sh
+docker run -it -v $(pwd)/out:/ext-mount --rm unicon/shibboleth-idp sh -c "init-idp.sh && chmod o+rw -R /ext-mount"
 	# Copy results to proper locations
 mkdir ./03-idp/shibboleth-idp/credentials/
 mkdir ./03-idp/shibboleth-idp/metadata/
@@ -78,7 +82,8 @@ mv ./out/customized-shibboleth-idp/credentials/{idp-backchannel.crt,idp-encrypti
 mv ./out/customized-shibboleth-idp/credentials/* ./secrets/idp/
 mv ./out/customized-shibboleth-idp/metadata/idp-metadata.xml ./03-idp/shibboleth-idp/metadata/idp-metadata.xml
 	# Remove validUntil from idp metadata
-sed -ie 's/validUntil="[^"]*" //' 03-idp/shibboleth-idp/metadata/idp-metadata.xml
+sed -i.bak -e 's/validUntil="[^"]*" //' 03-idp/shibboleth-idp/metadata/idp-metadata.xml
+rm 03-idp/shibboleth-idp/metadata/idp-metadata.xml.bak
 read -s -p "Re-enter backchannel password for compose:" backchannel
 printf "\n"
 
@@ -89,7 +94,7 @@ read -s -p "Enter browser keystore password: " browser
 printf "\n"
 openssl pkcs12 -inkey idp-browser.pem -in idp-browser.crt -export -out idp-browser.p12 -passout pass:${browser} 
 chown $USER:docker ./*
-chmod o+r ugo+rw ./*
+chmod o+r ./*
 cd ../..
 
 # Add store passwords to compose
@@ -126,7 +131,7 @@ rm ./04-sp/etc-shibboleth/sp-cert.pem
 # SP key
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout ./secrets/sp/sp-key.pem -out ./04-sp/etc-shibboleth/sp-cert.pem -subj "$subj" 
 chown $USER:docker ./secrets/sp/sp-key.pem
-chmod o+r g+rw ./secrets/sp/sp-key.pem
+chmod o+r,g+rw ./secrets/sp/sp-key.pem
 
 # Fetch new metadata
 echo "Retrieving SP metadata, expecting availability on localhost"
