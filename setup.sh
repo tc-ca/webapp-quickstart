@@ -67,6 +67,9 @@ mkdir ./03-idp/shibboleth-idp/credentials/
 mkdir ./03-idp/shibboleth-idp/metadata/
 mv ./out/customized-shibboleth-idp/credentials/{idp-backchannel.crt,idp-encryption.crt,idp-signing.crt,sealer.kver} ./03-idp/shibboleth-idp/credentials/
 mv ./out/customized-shibboleth-idp/credentials/* ./secrets/idp/
+chown :docker ./secrets/idp/*
+chmod o+r ./secrets/idp/*
+
 mv ./out/customized-shibboleth-idp/metadata/idp-metadata.xml ./03-idp/shibboleth-idp/metadata/idp-metadata.xml
 	# Remove validUntil from idp metadata
 sed -ie 's/validUntil="[^"]*" //' 03-idp/shibboleth-idp/metadata/idp-metadata.xml
