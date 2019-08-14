@@ -7,9 +7,11 @@ This is intended to be a full implementation of a webapp secured to satisfy Prot
 Add `127.0.0.1	  webapp` to your hosts file
 
 Run `setup.sh` to generate the secrets.\
+_Note: run with `sudo` if on linux._\
 _Note: run `winpty bash` if using git bash before executing the script_
 
-To build all the images and start the stack: `docker-compose up --build`
+To build all the images and start the stack: `docker-compose up --build`\
+The `--build` is important because the setup script gathers some resources required to run.
 
 ## Other
 
