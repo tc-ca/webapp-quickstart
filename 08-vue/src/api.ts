@@ -52,13 +52,7 @@ export const Api = {
         )
     },
 
-    invoke(operationName : string, variables? : any): Promise<any> {
-        return this.invokeRaw(
-            {query: this.graphQL, variables, operationName}
-        );
-    },
-
-    invokeRaw(data : {
+    invoke(data : {
         query: string,
         variables?: any,
         operationName?: any
@@ -87,9 +81,40 @@ export const Api = {
         },
         mutations: {
             methods: {
+				async $_createTodo(name: string, priority: number) {
+					await Api.invoke({
+						query: `
+							mutation($name: String!, $priority: Int!) {
+								createTodo(name: $name, priority: $priority)
+							}`,
+						variables: {name, priority}
+					});
+					store.dispatch('snackbar', this.$t('common.creationSuccess')),
+					Api.eventBus.$emit('refresh');
+				},
+				async $_deleteTodo(id: number) {
+					await Api.invoke({
+						query: `
+							mutation($id: Int!) {
+								deleteTodo(id: $id)
+							}`,
+						variables: {id}
+					});
+					store.dispatch('snackbar', this.$t('common.deletionSuccess')),
+					Api.eventBus.$emit('refresh');
+				},
+				async $_updateTodo(id: number, name: string, priority: number) {
+					await Api.invoke({
+						query: `
+							mutation($id: Int!, name: String!, priority: Int!) {
+								updateTodo(id: $id, name: $name, priority: $priority)
+							}`,
+						variables: {id,name,priority},
+					});
+					store.dispatch('snackbar', this.$t('common.updateSuccess')),
+					Api.eventBus.$emit('refresh');
+				}
             }
         }
-    },
-
-    graphQL: require('./api/views').default + require('./api/mutations').default + require('./api/slicers').default + require('./api/pickers').default + require('./api/forms').default
+    }
 }

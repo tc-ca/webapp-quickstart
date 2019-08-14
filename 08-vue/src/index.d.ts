@@ -14,7 +14,7 @@ export interface Route {
 	beforeEnter?:()=>void;
 }
 
-export interface Todo {
+export interface TodoItem {
 	id: number;
 	name: string;
 	priority: number;

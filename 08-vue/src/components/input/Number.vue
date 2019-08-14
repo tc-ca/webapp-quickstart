@@ -25,7 +25,7 @@
                             :value="number"
                             :rules="rules"
                             class="ml-2"
-                            :label="$t('prompts.enterNewValue')" />
+                            :label="$t('common.enterNewValue')" />
                     </v-form>
                 </v-flex>
                 <v-flex xs2>
@@ -65,7 +65,7 @@ import {
 
 export default wrap({
     name: 'Number',
-    props: ['number', 'type'],
+    props: ['number'],
     data() {
         return {
             input: this.number,
@@ -96,23 +96,12 @@ export default wrap({
             return parseFloat(this.input);
         },
         rules():((x:string)=>boolean|string)[] {
-            switch(this.type) {
-                case 'fte': return [
-                        (x:string) => this.inputNumber >= 0 && this.inputNumber <= 1 
-                            || this.$t('errors.fteRange')
-                    ];
-                case 'ooc': return [
-                        (x:string) => this.inputNumber >= 0 || this.$t('errors.negative')
-                    ];
-                default: return [];
-            }
+            return [
+				(x:string) => this.inputNumber >= 0 || this.$t('errors.negative')
+			];
         },
         display(): string {
-            switch(this.type) {
-                case 'fte': return this.number;
-                case 'ooc': return this.$data.$_currencyFormatter.format(this.number/1000)
-                default: return this.number;
-            }
+            return this.$data.$_numberFormatter.format(this.number);
         }
     },
 });
