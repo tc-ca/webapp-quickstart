@@ -32,6 +32,14 @@ Once you see the `Started @60000ms` message in the idp logs, the app is ready.\
 You can view a tail of your logs with `docker-compose logs -f`\
 To see the app, visit `http://webapp/` in your browser.
 
+Logins:
+
+- staff1
+- student1
+- admin
+
+The password for each account is `password`
+
 ## Development
 
 To run in development mode, use `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build`\
