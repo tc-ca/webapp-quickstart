@@ -13,6 +13,18 @@ _Note: run `winpty bash` if using git bash before executing the script_
 To build all the images and start the stack: `docker-compose up --build`\
 The `--build` is important because the setup script gathers some resources required to run.
 
+Once you see the `Started @60000ms` message in the idp logs, the app is ready.\
+You can view a tail of your logs with `docker-compose logs -f`\
+To see the app, visit `http://webapp/` in your browser.
+
+## Development
+
+To run in development mode, use `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build`\
+This will disable the login overhead, and enable hot-reloading for the vuejs and graphql layers.
+
+Once ready, visit `http://webapp/` in your browser.\
+Now you should be able to make changes to the vuejs and graphql files and it will reload in your browser automatically.
+
 ## Other
 
 ### VSCode and the private Docker registry
