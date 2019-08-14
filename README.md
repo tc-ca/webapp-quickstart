@@ -10,6 +10,20 @@ Run `setup.sh` to generate the secrets.\
 _Note: run with `sudo` if on linux._\
 _Note: run `winpty bash` if using git bash before executing the script_
 
+The setup script will ask you for the following:
+
+- Database password (you pick, it will give you rules)
+- Hostname (enter webapp)
+- SAML EntityID (hit enter, use the default)
+- Attribute Scope (use the default)
+- Backchannel PKCS12 Password (you pick)
+- Cookie Encryption Key Password (you pick)
+- Backchannel password (enter the same one from before)
+- Browser keystore password (you pick)
+
+This will configure all the required metadata for the Shibboleth IdP and SP.\
+_Note: that the passwords entered in the setup to configure Shibboleth are stored in plaintext in the configuration files._
+
 To build all the images and start the stack: `docker-compose up --build`\
 The `--build` is important because the setup script gathers some resources required to run.
 
