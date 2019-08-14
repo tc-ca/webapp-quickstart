@@ -6,7 +6,7 @@
 					<v-toolbar flat color="white">
 						<v-toolbar-title>{{ $t('common.todo') }}</v-toolbar-title>
 						<v-divider class="mx-4" inset vertical />
-						<v-btn color="primary" dark class="mb-2">{{ $t('common.add') }}</v-btn>
+						<v-btn color="primary" dark class="mb-2" @click="$_createTodo('New todo', 12)">{{ $t('common.add') }}</v-btn>
 					</v-toolbar>
 				</v-card-title>
 				<v-data-table
@@ -14,7 +14,9 @@
 					:items="todoList"
 					class="elevation-1"
 					item-key="id"
+                    :rows-per-page-items="[20,50,100,200,500]"
 					:loading="!loaded"
+					pages
 					:search="search"
 				>
 					<template v-slot:items="props">
@@ -34,7 +36,7 @@ import ToDoSingle from "../components/frames/ToDoSingle.vue";
 import CreateProjectButton from "../components/controls/CreateProjectButton.vue";
 export default wrap({
 	name: "todo-list",
-	mixins: [Api.mixins.eventBusSubscriber],
+	mixins: [Api.mixins.eventBusSubscriber, Api.mixins.mutations],
 	components: {
 		"to-do": ToDoSingle
 	},
@@ -50,19 +52,21 @@ export default wrap({
 			]
 		};
 	},
-	async created() {
-		const resp = await Api.invoke({
-			query: `
-					query { 
-						todoList {
-							id
-							name
-							priority
-						}
-					}`
-		});
-		this.todoList = Object.freeze(resp.todoList);
-		this.loaded = true;
+	methods: {
+		async refresh() {
+			const resp = await Api.invoke({
+				query: `
+						query { 
+							todoList {
+								id
+								name
+								priority
+							}
+						}`
+			});
+			this.todoList = Object.freeze(resp.todoList);
+			this.loaded = true;
+		}
 	}
 });
 </script>
