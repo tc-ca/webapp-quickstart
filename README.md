@@ -1,6 +1,7 @@
 # Webapp Quickstart
 
-This is intended to be a full implementation of a webapp secured to satisfy ProtectedB.
+This is intended to be a full implementation of a webapp including the login security.\
+Tested on Ubuntu 18.04LTS. See [here](https://gccode.ssc-spc.gc.ca/docker-developer-diaries/docker-vbox/wikis/home) for help getting Ubuntu+Docker running in VirtualBox.
 
 ## Build
 
