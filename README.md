@@ -13,7 +13,7 @@ _Note: run `winpty bash` if using git bash before executing the script_
 The setup script will ask you for the following:
 
 - Database password (you pick, it will give you rules)
-- Hostname (enter webapp)
+- Hostname (enter `webapp`)
 - SAML EntityID (hit enter, use the default)
 - Attribute Scope (use the default)
 - Backchannel PKCS12 Password (you pick)
