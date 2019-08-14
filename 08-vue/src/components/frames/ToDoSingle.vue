@@ -4,7 +4,8 @@
 			{{ item.id }}
 		</td>
 		<td>
-			{{ item.name }}
+			<v-text-field :value="item.name"
+			@change="n => $_updateTodo(item.id, n, item.priority)"/>
 		</td>
 		<td>
 			<number :number="item.priority"

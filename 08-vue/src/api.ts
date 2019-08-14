@@ -106,7 +106,7 @@ export const Api = {
 				async $_updateTodo(id: number, name: string, priority: number) {
 					await Api.invoke({
 						query: `
-							mutation($id: Int!, name: String!, priority: Int!) {
+							mutation($id: Int!, $name: String!, $priority: Int!) {
 								updateTodo(id: $id, name: $name, priority: $priority)
 							}`,
 						variables: {id,name,priority},
