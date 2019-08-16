@@ -21,6 +21,8 @@
 				deletionSuccess: 'Deleted successfully',
 				updateSuccess: 'Updated successfully',
 				enterNewValue: 'Enter new value',
+				clickCount: 'You\'ve clicked {{ count }} time',
+				clickCount_plural: 'You\'ve clicked {{ count }} times'
 			},
             pages: {
 				home: 'Home',
@@ -34,6 +36,9 @@
     },
     fr: {
 		translation: {
+			common: {
+				clickCount: 'Vous avez cliqué {{ count }} fois',
+			},
             pages: {
 				home: 'Accueil',
                 todo: 'Liste de choses à faire',

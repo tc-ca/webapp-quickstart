@@ -1,6 +1,7 @@
 export default `
 type Query {
-    todoList: [Todo!]!
+	todoList: [Todo!]!
+	todo(id: Int!): Todo
 }
 
 type Mutation {
