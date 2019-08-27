@@ -29,9 +29,9 @@
 </template>
 
 <script lang="ts">
-import { wrap } from "../utils";
+import { wrap } from "@/utils";
 import { TodoItem } from "..";
-import { Api } from "../api";
+import { Api } from "@/api";
 import ToDoSingle from "../components/frames/ToDoSingle.vue";
 import CreateProjectButton from "../components/controls/CreateProjectButton.vue";
 export default wrap({

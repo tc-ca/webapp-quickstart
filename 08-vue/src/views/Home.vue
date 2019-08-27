@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { wrap } from "../utils";
+import { wrap } from "@/utils";
 
 export default wrap({
 	name: 'Home',

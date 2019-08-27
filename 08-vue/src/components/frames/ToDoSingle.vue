@@ -16,8 +16,8 @@
 </template>
 
 <script lang="ts">
-import { wrap } from '../../utils';
-import { Api } from '../../api';
+import { wrap } from '@/utils';
+import { Api } from '@/api';
 import Number from '../input/Number.vue';
 
 export default wrap({
