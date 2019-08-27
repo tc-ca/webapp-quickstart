@@ -61,7 +61,7 @@
 <script lang="ts">
 import {
     wrap
-} from "../../utils";
+} from "@/utils";
 
 export default wrap({
     name: 'Number',

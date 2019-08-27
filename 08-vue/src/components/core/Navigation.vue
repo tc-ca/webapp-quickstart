@@ -43,9 +43,9 @@
 import Vue from "vue";
 import { routes } from "../../router";
 import { Route } from "../..";
-import { Api } from "../../api";
+import { Api } from "@/api";
 import Locales from "../../locales";
-import { wrap } from "../../utils";
+import { wrap } from "@/utils";
 import { mapState } from "vuex";
 
 export default wrap({
