@@ -8,9 +8,9 @@ import { database } from '../../db';
 export default {
     async todoList(args : any, msg : IncomingMessage, info : GraphQLResolveInfo) {
         const fields: Dictionary< any > = graphqlFields(info);
-        return await database.query(`
+        return await database.query`
             SELECT DISTINCT
-				${
+				${{raw:
 					[
 						{gqlName: 'id', dbName: 'TODO_ID'},
 						{gqlName: 'name', dbName: 'NAME_NM'},
@@ -19,16 +19,16 @@ export default {
 						.filter((x:any) => x.gqlName in fields)
 						.map((x: any) => `[${x.dbName}] AS [${x.gqlName}]`)
 						.join(',\n')
-				}
+				}}
             FROM
                 FC001_TODO
-        `);
+        `;
 	},
     async todo(args : any, msg : IncomingMessage, info : GraphQLResolveInfo) {
         const fields: Dictionary< any > = graphqlFields(info);
-		return (await database.query(`
+		return (await database.query`
 			SELECT TOP(1)
-					${
+					${{raw:
 						[
 							{gqlName: 'id', dbName: 'TODO_ID'},
 							{gqlName: 'name', dbName: 'NAME_NM'},
@@ -37,9 +37,10 @@ export default {
 							.filter((x:any) => x.gqlName in fields)
 							.map((x: any) => `[${x.dbName}] AS [${x.gqlName}]`)
 							.join(',\n')
-					}
+					}}
 			FROM
 				FC001_TODO
-		`))[0];
+			WHERE TODO_ID=${{var: args.id}}
+		`)[0];
 	},
 };
