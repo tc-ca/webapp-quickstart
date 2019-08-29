@@ -11,7 +11,7 @@ import log from './routes/log';
 import { database } from './db';
 
 async function main() {
-	await database.query`'SELECT 1'`;
+	await database.query`SELECT 1`;
 
     const app = express();
     app.use(morgan('combined'));
