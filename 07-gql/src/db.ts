@@ -35,17 +35,63 @@ pool.on('error', err => {
 });
 
 class Database {
-    query(query : string): Promise<any[]> {
+	
+	/**
+	 * Template variables must be wrapped.
+	 * {raw: string} => no escaping
+	 * {var: string} => var is escaped for sql injection
+	 */
+    query(blocks:TemplateStringsArray, ...args:any[]): Promise<any[]> {
         return new Promise(async (resolve, reject) => {
+			let newBlocks = new Array(...blocks);
+			let newArgs = [];
+			console.log();
+			// console.dir(blocks);
+			// console.dir(args);
+			for (let i=args.length-1; i>=0; i--) {
+				const arg = args[i];
+				if (Array.isArray(arg)) {
+					if (arg.length === 0) {
+						newArgs.unshift({raw:``});
+					} else {
+						for (let j=arg.length-1; j>=0; j--) {
+							if (j!=arg.length-1)
+								newBlocks.splice(i+1,0,'');
+							newArgs.unshift(arg[j]);
+						}
+					}
+				} else {
+					newArgs.unshift(arg);
+				}
+			}
+						
+			// console.dir(newBlocks);
+			// console.dir(newArgs);
+			for (let i=0; i<newBlocks.length && i<newArgs.length; i++) {
+				const arg = newArgs[i];
+				if (typeof arg !== 'object')
+					throw new Error('Template variable must be wrapped in object');
+				if ('raw' in arg) {
+					newBlocks.splice(i,2,newBlocks[i]+arg.raw+(i < newBlocks.length-1 ? newBlocks[i+1] : ''));
+					newArgs.splice(i,1);
+					i--;
+				} else if ('var' in arg) {
+					newArgs.splice(i,1,arg.var);
+				} else {
+					throw new Error('Template variable not marked with raw or var at position ' + i + ' ' + require('util').inspect(arg));
+				}
+			}
+			// console.dir(newBlocks);
+			// console.dir(newArgs);
+			console.log(newBlocks.map((block:string,i:number) => block + (i < newArgs.length ? `\${${newArgs[i]}}` : '')).join(''));
             await poolConnection;
-            console.log(`Query\n${query}`);
             let start = Date.now();
             let rtn = [];
             const request: Request = pool.request();
-            request.stream = true;
-            request.query(query);
+			request.stream = true;
+			request.query.apply(request,[newBlocks, ...newArgs]);
             request.on('error', err => {
-                console.log(`\nError folding query\n${query}\n${err}\n`);
+                console.log(`\nError folding query\n${err}\n`);
                 reject(err);
             });
             request.on('row', row => {
