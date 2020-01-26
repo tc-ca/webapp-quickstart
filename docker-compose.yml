@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+  server-db:
+    build: .
+    image: server-db:prod-latest
+    container_name: server-db
+    hostname: server-db
+    environment:
+      SA_PASSWORD: ${SA_PASSWORD}
+    volumes:
+      - mssql:/var/opt/mssql
+    ports:
+      - "1433:1433"
+    networks:
+      - server-network
+      - server-db
+
+volumes:
+  mssql:
+    name: mssql
+
+networks:
+  server-network:
+    external:
+      name: server-network
+  server-db:
+    name: server-db
+    driver: bridge
