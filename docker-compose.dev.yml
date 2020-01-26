@@ -1,0 +1,20 @@
+version: "3.7"
+
+services:
+  test-app2-api-gql:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: api-gql:dev-latest
+    container_name: test-api-gql
+    hostname: test-api-gql
+    environment:
+      MSSQL_SERVER: test-server-db
+      MSSQL_PORT: 1433
+      MSSQL_USER: sa
+      MSSQL_PASSWORD: ${SA_PASSWORD}
+      MSSQL_DB_NAME: myDB
+    volumes:
+      - ./app:/app:delegated
+      - /app/node_modules/
+    restart: on-failure

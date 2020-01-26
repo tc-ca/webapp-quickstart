@@ -1,0 +1,15 @@
+version: "3.7"
+
+services:
+  app2-api-gql:
+    build: .
+    image: api-gql:prod-latest
+    container_name: api-gql
+    hostname: api-gql
+    environment:
+      MSSQL_SERVER: server-db
+      MSSQL_PORT: 1433
+      MSSQL_USER: sa
+      MSSQL_PASSWORD: ${SA_PASSWORD}
+      MSSQL_DB_NAME: myDB
+    restart: on-failure

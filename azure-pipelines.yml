@@ -1,0 +1,23 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+  - master
+
+resources:
+  - repo: self
+
+stages:
+  - stage: Build
+    displayName: Build image
+    jobs:
+      - job: Build
+        displayName: Build
+        pool: my Agent Pool
+        steps:
+        - task: DockerCompose@0
+          inputs:
+            dockerComposeFile: '**/docker-compose.yml'
+            action: 'Run a Docker Compose command'
+            dockerComposeCommand: 'build'
