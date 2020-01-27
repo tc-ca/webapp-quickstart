@@ -21,9 +21,6 @@ volumes:
     name: mssql
 
 networks:
-  server-network:
-    external:
-      name: server-network
   server-db:
     name: server-db
     driver: bridge
