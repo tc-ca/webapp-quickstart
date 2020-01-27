@@ -9,6 +9,7 @@ const files = readdirSync(__dirname, { withFileTypes: true });
 export const typeDefs = [
 	gql`
 		type Query
+		type Mutation
 	`,
 ];
 export const resolvers = {};
