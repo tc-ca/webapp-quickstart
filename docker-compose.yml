@@ -14,7 +14,6 @@ services:
     ports:
       - "1433:1433"
     networks:
-      - server-network
       - server-db
 
 volumes:
